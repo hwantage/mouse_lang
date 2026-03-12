@@ -103,4 +103,11 @@ class IndicatorWindow: NSWindow {
         let y = cursorLocation.y + offsetY
         self.setFrameOrigin(NSPoint(x: x, y: y))
     }
+
+    /// Position above the text caret (for caret indicator)
+    func moveAboveCaret(position: NSPoint) {
+        let x = position.x - 14  // center the 28px indicator
+        let y = position.y + 4   // 4px gap above caret
+        self.setFrameOrigin(NSPoint(x: x, y: y))
+    }
 }

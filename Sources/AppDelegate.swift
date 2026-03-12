@@ -27,9 +27,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var adjustModeMenuItem: NSMenuItem!
     private var scrollMonitor: Any?
 
+    // Caret tracking
+    private var caretTracker: CaretTracker!
+    private var caretIndicatorWindow: IndicatorWindow!
+    private var isCaretIndicatorEnabled = true
+    private var caretToggleMenuItem: NSMenuItem!
+
     func applicationDidFinishLaunching(_ notification: Notification) {
         setupStatusBar()
         setupIndicator()
+        setupCaretTracker()
         setupInputSourceManager()
         startMouseTracking()
     }
@@ -50,14 +57,23 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         let menu = NSMenu()
 
-        // Toggle indicator
+        // Toggle mouse indicator
         toggleMenuItem = NSMenuItem(
-            title: "표시 끄기",
+            title: "마우스 표시 끄기",
             action: #selector(toggleIndicator),
             keyEquivalent: "t"
         )
         toggleMenuItem.target = self
         menu.addItem(toggleMenuItem)
+
+        // Toggle caret indicator
+        caretToggleMenuItem = NSMenuItem(
+            title: "입력 커서 표시 끄기",
+            action: #selector(toggleCaretIndicator),
+            keyEquivalent: "i"
+        )
+        caretToggleMenuItem.target = self
+        menu.addItem(caretToggleMenuItem)
 
         menu.addItem(NSMenuItem.separator())
 
@@ -113,7 +129,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         posSubmenu.addItem(NSMenuItem.separator())
 
-        // Adjustment mode toggle
         adjustModeMenuItem = NSMenuItem(
             title: "🎯 위치 조절 모드 (스크롤로 이동)",
             action: #selector(toggleAdjustMode),
@@ -192,17 +207,41 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         indicatorWindow.moveTo(cursorLocation: mouseLocation, offsetX: offsetX, offsetY: offsetY)
     }
 
+    // MARK: - Caret Tracker
+
+    private func setupCaretTracker() {
+        caretIndicatorWindow = IndicatorWindow()
+        caretIndicatorWindow.applyTheme(currentTheme)
+        caretIndicatorWindow.applyOpacity(currentOpacity)
+        caretIndicatorWindow.orderOut(nil)
+
+        caretTracker = CaretTracker()
+        caretTracker.onCaretPositionChanged = { [weak self] position in
+            guard let self = self, self.isCaretIndicatorEnabled else { return }
+            if let pos = position {
+                self.caretIndicatorWindow.moveAboveCaret(position: pos)
+                self.caretIndicatorWindow.orderFront(nil)
+            } else {
+                self.caretIndicatorWindow.orderOut(nil)
+            }
+        }
+        caretTracker.start()
+    }
+
     // MARK: - Input Source Manager
 
     private func setupInputSourceManager() {
         inputSourceManager = InputSourceManager()
 
         inputSourceManager.onInputSourceChanged = { [weak self] isKorean in
-            self?.indicatorWindow.update(isKorean: isKorean)
+            guard let self = self else { return }
+            self.indicatorWindow.update(isKorean: isKorean)
+            self.caretIndicatorWindow.update(isKorean: isKorean)
         }
 
         let isKorean = inputSourceManager.isCurrentInputSourceKorean()
         indicatorWindow.update(isKorean: isKorean)
+        caretIndicatorWindow.update(isKorean: isKorean)
     }
 
     // MARK: - Mouse Tracking
@@ -240,7 +279,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             adjustModeMenuItem.title = "🎯 위치 조절 모드 끄기"
             indicatorWindow.setAdjustMode(true)
 
-            // Monitor scroll events globally for position adjustment
             scrollMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.scrollWheel]) { [weak self] event in
                 self?.handleScrollAdjust(event)
             }
@@ -258,7 +296,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private func handleScrollAdjust(_ event: NSEvent) {
         guard isAdjustMode else { return }
 
-        // Shift+Scroll = horizontal, normal Scroll = vertical
         if event.modifierFlags.contains(.shift) {
             offsetX += event.scrollingDeltaY > 0 ? -2 : 2
         } else {
@@ -277,13 +314,26 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         isIndicatorEnabled.toggle()
 
         if isIndicatorEnabled {
-            toggleMenuItem.title = "표시 끄기"
+            toggleMenuItem.title = "마우스 표시 끄기"
             indicatorWindow.orderFront(nil)
             let mouseLocation = NSEvent.mouseLocation
             indicatorWindow.moveTo(cursorLocation: mouseLocation, offsetX: offsetX, offsetY: offsetY)
         } else {
-            toggleMenuItem.title = "표시 켜기"
+            toggleMenuItem.title = "마우스 표시 켜기"
             indicatorWindow.orderOut(nil)
+        }
+    }
+
+    @objc private func toggleCaretIndicator() {
+        isCaretIndicatorEnabled.toggle()
+
+        if isCaretIndicatorEnabled {
+            caretToggleMenuItem.title = "입력 커서 표시 끄기"
+            caretTracker.start()
+        } else {
+            caretToggleMenuItem.title = "입력 커서 표시 켜기"
+            caretTracker.stop()
+            caretIndicatorWindow.orderOut(nil)
         }
     }
 
@@ -293,6 +343,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         currentTheme = Theme.allThemes[index]
         indicatorWindow.applyTheme(currentTheme)
+        caretIndicatorWindow.applyTheme(currentTheme)
 
         for item in themeMenuItems { item.state = .off }
         sender.state = .on
@@ -305,6 +356,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         currentOpacity = opacityValues[index]
         indicatorWindow.applyOpacity(currentOpacity)
+        caretIndicatorWindow.applyOpacity(currentOpacity)
 
         for item in opacityMenuItems { item.state = .off }
         sender.state = .on
@@ -312,10 +364,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc private func movePosition(_ sender: NSMenuItem) {
         switch sender.tag {
-        case 0: offsetY += offsetStep   // Up (macOS y-axis: up = positive)
-        case 1: offsetY -= offsetStep   // Down
-        case 2: offsetX -= offsetStep   // Left
-        case 3: offsetX += offsetStep   // Right
+        case 0: offsetY += offsetStep
+        case 1: offsetY -= offsetStep
+        case 2: offsetX -= offsetStep
+        case 3: offsetX += offsetStep
         default: break
         }
 
@@ -336,6 +388,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if let monitor = scrollMonitor {
             NSEvent.removeMonitor(monitor)
         }
+        caretTracker.stop()
         mouseTrackingTimer?.invalidate()
         mouseTrackingTimer = nil
         NSApp.terminate(nil)

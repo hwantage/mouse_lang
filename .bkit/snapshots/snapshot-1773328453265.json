@@ -1,0 +1,183 @@
+{
+  "timestamp": "2026-03-12T15:14:13.265Z",
+  "reason": "compaction",
+  "status": {
+    "version": "2.0",
+    "lastUpdated": "2026-03-12T15:14:13.207Z",
+    "activeFeatures": [
+      "Sources"
+    ],
+    "primaryFeature": "Sources",
+    "features": {
+      "Sources": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-03-12T13:15:03.019Z",
+          "lastUpdated": "2026-03-12T15:14:13.206Z"
+        },
+        "lastFile": "/Users/hwantage/works/hwantage/mouse-lang/Sources/AppDelegate.swift"
+      }
+    },
+    "pipeline": {
+      "currentPhase": 1,
+      "level": "Dynamic",
+      "phaseHistory": []
+    },
+    "session": {
+      "startedAt": "2026-03-12T12:42:25.022Z",
+      "onboardingCompleted": false,
+      "lastActivity": "2026-03-12T15:14:13.207Z"
+    },
+    "history": [
+      {
+        "timestamp": "2026-03-12T13:15:03.019Z",
+        "feature": "Sources",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-12T13:15:08.959Z",
+        "feature": "Sources",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-12T13:15:18.913Z",
+        "feature": "Sources",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-12T13:15:30.301Z",
+        "feature": "Sources",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-12T13:27:24.673Z",
+        "feature": "Sources",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-12T13:27:34.473Z",
+        "feature": "Sources",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-12T13:27:49.677Z",
+        "feature": "Sources",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-12T13:35:41.909Z",
+        "feature": "Sources",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-12T13:35:56.283Z",
+        "feature": "Sources",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-12T14:03:44.368Z",
+        "feature": "Sources",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-12T14:03:50.191Z",
+        "feature": "Sources",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-12T14:04:47.782Z",
+        "feature": "Sources",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-12T14:43:17.186Z",
+        "feature": "Sources",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-12T14:43:28.716Z",
+        "feature": "Sources",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-12T14:43:32.589Z",
+        "feature": "Sources",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-12T14:43:36.336Z",
+        "feature": "Sources",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-12T14:45:44.676Z",
+        "feature": "Sources",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-12T14:49:12.555Z",
+        "feature": "Sources",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-12T14:53:24.384Z",
+        "feature": "Sources",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-12T14:53:31.544Z",
+        "feature": "Sources",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-12T14:53:35.807Z",
+        "feature": "Sources",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-12T14:55:41.596Z",
+        "feature": "Sources",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-12T15:11:31.612Z",
+        "feature": "Sources",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-03-12T15:14:13.206Z",
+        "feature": "Sources",
+        "phase": "do",
+        "action": "updated"
+      }
+    ]
+  }
+}
