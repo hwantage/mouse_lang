@@ -1,0 +1,89 @@
+{
+  "version": "2.0",
+  "lastUpdated": "2026-03-12T13:35:56.283Z",
+  "activeFeatures": [
+    "Sources"
+  ],
+  "primaryFeature": "Sources",
+  "features": {
+    "Sources": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-03-12T13:15:03.019Z",
+        "lastUpdated": "2026-03-12T13:35:56.283Z"
+      },
+      "lastFile": "/Users/hwantage/works/hwantage/mouse-lang/Sources/IndicatorWindow.swift"
+    }
+  },
+  "pipeline": {
+    "currentPhase": 1,
+    "level": "Dynamic",
+    "phaseHistory": []
+  },
+  "session": {
+    "startedAt": "2026-03-12T12:42:25.022Z",
+    "onboardingCompleted": false,
+    "lastActivity": "2026-03-12T13:35:56.283Z"
+  },
+  "history": [
+    {
+      "timestamp": "2026-03-12T13:15:03.019Z",
+      "feature": "Sources",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-12T13:15:08.959Z",
+      "feature": "Sources",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-12T13:15:18.913Z",
+      "feature": "Sources",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-12T13:15:30.301Z",
+      "feature": "Sources",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-12T13:27:24.673Z",
+      "feature": "Sources",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-12T13:27:34.473Z",
+      "feature": "Sources",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-12T13:27:49.677Z",
+      "feature": "Sources",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-12T13:35:41.909Z",
+      "feature": "Sources",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-03-12T13:35:56.283Z",
+      "feature": "Sources",
+      "phase": "do",
+      "action": "updated"
+    }
+  ]
+}
