@@ -75,7 +75,7 @@ class IndicatorWindow: NSWindow {
         self.hasShadow = false
         self.ignoresMouseEvents = true
         self.level = NSWindow.Level(rawValue: NSWindow.Level.statusBar.rawValue + 1)
-        self.collectionBehavior = [.canJoinAllSpaces, .ignoresCycle, .stationary]
+        self.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .ignoresCycle, .stationary]
 
         self.contentView = indicatorView
         self.orderFront(nil)
