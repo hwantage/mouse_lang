@@ -172,6 +172,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         menu.addItem(NSMenuItem.separator())
 
+        let debugItem = NSMenuItem(
+            title: "AX 디버그 덤프",
+            action: #selector(dumpAccessibilityFocus),
+            keyEquivalent: "d"
+        )
+        debugItem.target = self
+        menu.addItem(debugItem)
+
+        menu.addItem(NSMenuItem.separator())
+
         // Quit
         let quitItem = NSMenuItem(
             title: "종료",
@@ -382,6 +392,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         refreshPositionLabel()
         let mouseLocation = NSEvent.mouseLocation
         indicatorWindow.moveTo(cursorLocation: mouseLocation, offsetX: offsetX, offsetY: offsetY)
+    }
+
+    @objc private func dumpAccessibilityFocus() {
+        caretTracker.dumpCurrentFocusContext()
     }
 
     @objc private func quitApp() {

@@ -89,6 +89,45 @@ final class CaretTracker {
         }
     }
 
+    func dumpCurrentFocusContext() {
+        refreshAccessibilityTrust()
+        guard isAccessibilityTrusted else {
+            caretLog("DEBUG: accessibility permission is not granted")
+            return
+        }
+
+        guard let frontApp = NSWorkspace.shared.frontmostApplication else {
+            caretLog("DEBUG: no frontmost application")
+            return
+        }
+
+        let appName = frontApp.localizedName ?? "unknown"
+        let appElement = AXUIElementCreateApplication(frontApp.processIdentifier)
+        caretLog("[\(appName)] DEBUG: begin focus dump")
+
+        if let focusedElement = copyFocusedElement(from: appElement) {
+            logElementSnapshot(appName: appName, label: "focused", element: focusedElement)
+
+            if let resolvedElement = resolveCaretElement(startingAt: focusedElement),
+               !CFEqual(resolvedElement, focusedElement) {
+                logElementSnapshot(appName: appName, label: "resolved", element: resolvedElement)
+            }
+
+            for (index, ancestor) in ancestorElements(startingAt: focusedElement, maxDepth: 5).enumerated() {
+                logElementSnapshot(appName: appName, label: "ancestor[\(index)]", element: ancestor)
+            }
+
+            let childCandidates = Array((focusedChildren(of: focusedElement) + nonFocusedChildren(of: focusedElement)).prefix(8))
+            for (index, child) in childCandidates.enumerated() {
+                logElementSnapshot(appName: appName, label: "child[\(index)]", element: child)
+            }
+        } else {
+            caretLog("[\(appName)] DEBUG: no focused element")
+        }
+
+        caretLog("[\(appName)] DEBUG: end focus dump")
+    }
+
     private func installWorkspaceObserver() {
         guard workspaceObserver == nil else { return }
 
@@ -192,7 +231,8 @@ final class CaretTracker {
             Unmanaged.passUnretained(self).toOpaque()
         )
 
-        if result != .success && result != .notificationAlreadyRegistered {
+        let ignoredResults: Set<AXError> = [.success, .notificationAlreadyRegistered, .notificationUnsupported, .illegalArgument]
+        if !ignoredResults.contains(result) {
             caretLog("Observer add failed notification=\(notification) error=\(result.rawValue)")
         }
     }
@@ -288,12 +328,7 @@ final class CaretTracker {
             lastLoggedApp = appName
         }
 
-        guard let menuBarScreen = NSScreen.screens.first(where: { $0.frame.origin == .zero }) ?? NSScreen.screens.first else {
-            return nil
-        }
-
-        let appKitY = menuBarScreen.frame.height - caretRect.origin.y
-        return NSPoint(x: caretRect.origin.x, y: appKitY)
+        return appKitPoint(for: caretRect)
     }
 
     private func queryCaretRect(for element: AXUIElement, appName: String) -> CGRect? {
@@ -779,6 +814,28 @@ final class CaretTracker {
         return CGRect(origin: origin, size: size)
     }
 
+    private func appKitPoint(for axRect: CGRect) -> NSPoint? {
+        guard let desktopBounds = desktopBounds() else {
+            return nil
+        }
+
+        let appKitY = desktopBounds.maxY - axRect.origin.y
+        return NSPoint(x: axRect.origin.x, y: appKitY)
+    }
+
+    private func desktopBounds() -> CGRect? {
+        let frames = NSScreen.screens.map(\.frame)
+        guard var bounds = frames.first else {
+            return nil
+        }
+
+        for frame in frames.dropFirst() {
+            bounds = bounds.union(frame)
+        }
+
+        return bounds
+    }
+
     private func supportedAttributesSummary(for element: AXUIElement) -> String {
         let names = copyAttributeNames(for: element)
         let interesting = [
@@ -837,5 +894,29 @@ final class CaretTracker {
         let role = stringAttribute(kAXRoleAttribute as CFString, from: element) ?? "unknown"
         caretLog("[\(appName)] FAIL: caret rect unavailable role=\(role)")
         lastLoggedApp = appName
+    }
+
+    private func logElementSnapshot(appName: String, label: String, element: AXUIElement) {
+        let role = stringAttribute(kAXRoleAttribute as CFString, from: element) ?? "unknown"
+        let subrole = stringAttribute(kAXSubroleAttribute as CFString, from: element) ?? "-"
+        let title = stringAttribute(kAXTitleAttribute as CFString, from: element) ?? "-"
+        let attrs = supportedAttributesSummary(for: element)
+        let params = supportedParameterizedAttributesSummary(for: element)
+
+        var parts = [
+            "[\(appName)] DEBUG: \(label)",
+            "role=\(role)",
+            "subrole=\(subrole)",
+            "title=\(title)",
+            "attrs=\(attrs)",
+            "params=\(params)",
+            "score=\(caretSupportScore(for: element))",
+        ]
+
+        if let frame = frameOfElement(element) {
+            parts.append("frame=\(NSStringFromRect(frame))")
+        }
+
+        caretLog(parts.joined(separator: " "))
     }
 }
